@@ -1,6 +1,14 @@
 from faker import Faker
+import os
+from dotenv import load_dotenv
 import psycopg2
 import uuid
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get the database password from the environment variable
+db_password = os.getenv("POSTGRES_PASSWORD")
 
 # Initialize Faker
 fake = Faker()
@@ -9,7 +17,7 @@ fake = Faker()
 conn = psycopg2.connect(
     database="ehr_db",  # Change this if your database name is different
     user="postgres",
-    password="gravityCache",
+    password=db_password,
     host="127.0.0.1",
     port="5432"
 )
