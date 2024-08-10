@@ -34,7 +34,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  hospitalstreamingdemo:
+  data_faker:
     build: .
     depends_on:
       - kafka
