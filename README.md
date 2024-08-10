@@ -1,5 +1,7 @@
 # hospitalStreamingDemo
-A project designed to emulate, analyze, and combine multiple realistic data sources from an imaginary hospital.
+A project designed to process, analyze, and visualize multiple realistic, emulated data sources from an imaginary hospital. 
+
+(Currently just has fake data sources)
 
 ## Requirements
 Docker
