@@ -19,6 +19,6 @@ OR, to run in background:
 ```
 docker-compose --build -d 
 ```
-If you ran in the foreground you should see the output and multiple various types of faked data being generated and modified from various realistic sources after the inital bootup and delay.
+If you ran in the foreground wait for 20 seconds or so and you should see the output of multiple various types of faked data being generated and modified from various realistic sources after the inital bootup and delay.
 
 If you ran in the background you'll have to use docker desktop or terminal to connect to the hospitalSteamingDemo-data_faker-1 container
