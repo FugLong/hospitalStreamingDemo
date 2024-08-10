@@ -1,7 +1,7 @@
-import os
-from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import os
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -13,33 +13,46 @@ db_password = os.getenv("POSTGRES_PASSWORD")
 conn = psycopg2.connect(
     database="postgres",
     user="postgres",
-    password=db_password,  # Replace with your actual password
-    host="127.0.0.1",
+    password=db_password,
+    host="postgres",
     port="5432"
 )
-
-# Set the isolation level to AUTOCOMMIT so we can create the database
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cur = conn.cursor()
 
-# Create the EHR database
-cur.execute("CREATE DATABASE ehr_db")
+# Terminate all connections to the existing ehr_db
+try:
+    cur.execute("""
+        SELECT pg_terminate_backend(pid)
+        FROM pg_stat_activity
+        WHERE datname = 'ehr_db' AND pid <> pg_backend_pid();
+    """)
+    print("Terminated all connections to ehr_db.")
+except Exception as e:
+    print(f"Error terminating connections: {e}")
 
-# Close the connection to the 'postgres' database
+# Drop the existing ehr_db if it exists
+cur.execute("DROP DATABASE IF EXISTS ehr_db")
+print("Dropped existing ehr_db database.")
+
+# Create a fresh ehr_db
+cur.execute("CREATE DATABASE ehr_db")
+print("Created new ehr_db database.")
+
 cur.close()
 conn.close()
 
-# Connect to the newly created 'ehr_db' database
+# Connect to the new ehr_db database
 conn = psycopg2.connect(
     database="ehr_db",
     user="postgres",
-    password=db_password,  # Replace with your actual password
-    host="127.0.0.1",
+    password=db_password,
+    host="postgres",
     port="5432"
 )
 cur = conn.cursor()
 
-# Define schema
+# Define schema and ensure tables are created
 create_tables = """
 CREATE TABLE IF NOT EXISTS patients (
     patient_id UUID PRIMARY KEY,

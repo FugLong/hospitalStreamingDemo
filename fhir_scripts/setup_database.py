@@ -1,7 +1,7 @@
-import os
-from dotenv import load_dotenv
 import psycopg2
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
+import os
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -14,27 +14,29 @@ conn = psycopg2.connect(
     database="postgres",
     user="postgres",
     password=db_password,
-    host="127.0.0.1",
+    host="postgres",
     port="5432"
 )
-
-# Set the isolation level to AUTOCOMMIT so we can create the database
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cur = conn.cursor()
 
-# Create the FHIR API log database
-cur.execute("CREATE DATABASE fhir_api_logs")
+# Drop the existing fhir_api_logs if it exists
+cur.execute("DROP DATABASE IF EXISTS fhir_api_logs")
+print("Dropped existing fhir_api_logs database.")
 
-# Close the connection to the 'postgres' database
+# Create a fresh fhir_api_logs
+cur.execute("CREATE DATABASE fhir_api_logs")
+print("Created new fhir_api_logs database.")
+
 cur.close()
 conn.close()
 
-# Connect to the newly created 'fhir_api_logs' database
+# Connect to the new fhir_api_logs database
 conn = psycopg2.connect(
     database="fhir_api_logs",
     user="postgres",
     password=db_password,
-    host="127.0.0.1",
+    host="postgres",
     port="5432"
 )
 cur = conn.cursor()

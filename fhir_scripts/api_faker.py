@@ -1,11 +1,13 @@
-from faker import Faker
-import psycopg2
+import logging
 import os
-from dotenv import load_dotenv
-import json
-import uuid
+import sys
+import psycopg2
 import random
 import time
+import uuid
+import json
+from dotenv import load_dotenv
+from faker import Faker
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,12 +18,19 @@ db_password = os.getenv("POSTGRES_PASSWORD")
 # Initialize Faker
 fake = Faker()
 
+# Configure logging for FHIR
+logging.basicConfig(
+    stream=sys.stdout,
+    level=logging.INFO,
+    format='FHIR - %(asctime)s - %(levelname)s - %(message)s'
+)
+
 # Connect to the PostgreSQL databases
 ehr_conn = psycopg2.connect(
     database="ehr_db",
     user="postgres",
     password=db_password,
-    host="127.0.0.1",
+    host="postgres",
     port="5432"
 )
 ehr_cur = ehr_conn.cursor()
@@ -30,7 +39,7 @@ fhir_conn = psycopg2.connect(
     database="fhir_api_logs",
     user="postgres",
     password=db_password,
-    host="127.0.0.1",
+    host="postgres",
     port="5432"
 )
 fhir_cur = fhir_conn.cursor()
@@ -42,6 +51,7 @@ def log_api_request(method, endpoint, resource_type, status_code, request_payloa
         VALUES (%s, %s, %s, %s, %s, %s)
     """, (method, endpoint, resource_type, status_code, json.dumps(request_payload), json.dumps(response_payload)))
     fhir_conn.commit()
+    logging.info(f"Logged API request to {endpoint} for resource {resource_type} with status {status_code}")
 
 # Function to simulate creating a patient
 def create_patient():
@@ -75,11 +85,10 @@ def create_patient():
         response_payload={"id": patient_id, "status": "created"}
     )
 
-    print(f"Created patient {patient_id}")
+    logging.info(f"Created patient {patient_id}")
 
 # Function to simulate adding an observation
 def add_observation():
-    # Select a random patient
     ehr_cur.execute("SELECT patient_id FROM patients ORDER BY RANDOM() LIMIT 1")
     patient_id = ehr_cur.fetchone()[0]
     
@@ -109,11 +118,10 @@ def add_observation():
         response_payload={"id": observation_id, "status": "created"}
     )
 
-    print(f"Added observation {observation_id} for patient {patient_id}")
+    logging.info(f"Added observation {observation_id} for patient {patient_id}")
 
 # Function to simulate creating an encounter
 def create_encounter():
-    # Select a random patient
     ehr_cur.execute("SELECT patient_id FROM patients ORDER BY RANDOM() LIMIT 1")
     patient_id = ehr_cur.fetchone()[0]
     
@@ -145,11 +153,10 @@ def create_encounter():
         response_payload={"id": encounter_id, "status": "created"}
     )
 
-    print(f"Created encounter {encounter_id} for patient {patient_id}")
+    logging.info(f"Created encounter {encounter_id} for patient {patient_id}")
 
 # Function to simulate adding a medication
 def add_medication():
-    # Select a random patient
     ehr_cur.execute("SELECT patient_id FROM patients ORDER BY RANDOM() LIMIT 1")
     patient_id = ehr_cur.fetchone()[0]
     
@@ -181,7 +188,7 @@ def add_medication():
         response_payload={"id": medication_id, "status": "created"}
     )
 
-    print(f"Added medication {medication_id} for patient {patient_id}")
+    logging.info(f"Added medication {medication_id} for patient {patient_id}")
 
 # Function to simulate the API faker running continuously
 def run_api_faker():
@@ -192,7 +199,7 @@ def run_api_faker():
             action()
             time.sleep(random.randint(5, 15))  # Wait between actions
     except KeyboardInterrupt:
-        print("API faker stopped.")
+        logging.info("API faker stopped.")
     finally:
         ehr_cur.close()
         ehr_conn.close()

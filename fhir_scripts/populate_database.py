@@ -19,7 +19,7 @@ conn = psycopg2.connect(
     database="fhir_api_logs",
     user="postgres",
     password=db_password,
-    host="127.0.0.1",
+    host="postgres",
     port="5432"
 )
 cur = conn.cursor()

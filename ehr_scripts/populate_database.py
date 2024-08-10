@@ -18,7 +18,7 @@ conn = psycopg2.connect(
     database="ehr_db",  # Change this if your database name is different
     user="postgres",
     password=db_password,
-    host="127.0.0.1",
+    host="postgres",
     port="5432"
 )
 cur = conn.cursor()
