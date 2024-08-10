@@ -9,6 +9,8 @@ Clone the repo, then enter the repo's folder:
 ```
 cd hospitalStreamingDemo
 ```
+Change postgres password in .env if you want
+
 Then run: 
 ```
 docker-compose up --build 
