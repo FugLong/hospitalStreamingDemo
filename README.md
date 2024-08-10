@@ -5,7 +5,7 @@ A project designed to emulate, analyze, and combine multiple realistic data sour
 Docker
 
 ## Usage
-Clone the repo, enter the repo's folder: 
+Clone the repo, then enter the repo's folder: 
 ```
 cd hospitalStreamingDemo
 ```
