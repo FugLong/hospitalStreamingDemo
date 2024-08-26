@@ -1,7 +1,5 @@
 # hospitalStreamingDemo
-A project designed to process, analyze, and visualize multiple realistic, emulated data sources from an imaginary hospital. 
-
-(Currently just has fake data sources)
+A project designed to generate multiple emulated data sources from an imaginary hospital. Currently includes a tradtitional EHR db running in postgresql that is updated over time through faked traditional data entry updates and new age FHIR API calls. All faked API calls are logged in a separate postgres db. In addition, there are multiple faked streams of data coming from a kafka container that represent multiple types of data and devices. There are real time streams of data from modern hospital monitoring devices as well as medium speed events like new age patient tracking and status mobile apps. 
 
 ## Requirements
 Docker
